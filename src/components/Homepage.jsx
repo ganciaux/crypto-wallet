@@ -11,7 +11,7 @@ import Loader from './Loader'
 const { Title } = Typography
 
 const Homepage = () => {
-  const { data, isFetching } = useGetCryptosQuery(10)
+  const { data, isFetching } = useGetCryptosQuery({ count: 10, offset: 0 })
   const globalStats = data?.data?.stats
 
   if (isFetching) return <Loader />

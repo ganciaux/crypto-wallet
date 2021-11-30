@@ -8,7 +8,11 @@ import Loader from './Loader'
 
 const Cryptocurrencies = ({ simplified }) => {
   const count = simplified ? 10 : 100
-  const { data: cryptosList, isFetching } = useGetCryptosQuery(count)
+  const offset = 50
+  const { data: cryptosList, isFetching } = useGetCryptosQuery({
+    count,
+    offset,
+  })
   const [cryptos, setCryptos] = useState()
   const [searchTerm, setSearchTerm] = useState('')
 
