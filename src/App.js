@@ -10,6 +10,7 @@ import {
   Navbar,
 } from './components'
 import './App.css'
+import Cryptolist from './components/Cryptolist'
 
 const App = () => (
   <div className="app">
@@ -22,6 +23,9 @@ const App = () => (
           <Switch>
             <Route exact path="/">
               <Homepage />
+            </Route>
+            <Route exact path="/list">
+              <Cryptolist />
             </Route>
             <Route exact path="/exchanges">
               <Exchanges />
