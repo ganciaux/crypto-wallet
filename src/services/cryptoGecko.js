@@ -1,13 +1,14 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 const cryptoGeckoHeaders = {
-  'x-rapidapi-host': 'coinpaprika1.p.rapidapi.com',
-  'x-rapidapi-key': '7ce4dbab36mshdd18c65adaaf6aap19c22ajsn1a50b8beab17'
+  'x-rapidapi-host': 'coinGecko1.p.rapidapi.com',
+  'x-rapidapi-key': '7ce4dbab36mshdd18c65adaaf6aap19c22ajsn1a50b8beab17',
 }
 
-var axios = require("axios").default;
+const ids =
+  'crypto-com-chain,casper-network,solana,elrond-erd-2,bitcoin,chiliz,vechain,benqi,the-sandbox,gala,decentraland,stellar,avalanche-2,enjincoin,wax,theta-token,shiba-inu,uniswap,dogecoin,fantom,cardano,holotoken,ethereum'
 
-const baseUrl = 'https://coinpaprika1.p.rapidapi.com'
+const baseUrl = 'https://api.coingecko.com/api/v3'
 
 const createRequest = (url) => ({ url, headers: cryptoGeckoHeaders })
 
@@ -16,15 +17,9 @@ export const cryptoGecko = createApi({
   baseQuery: fetchBaseQuery({ baseUrl }),
   endpoints: (builder) => ({
     getCryptos: builder.query({
-      query: () => createRequest('/coins'),
-    }),
-    getCryptoDetails: builder.query({
-      query: (coinId) => createRequest(`/coins/${coinId}`),
+      query: () => createRequest(`/coins/markets?vs_currency=eur&ids=${ids}`),
     }),
   }),
 })
 
-export const {
-  useGetCryptosQuery,
-  useGetCryptoDetailsQuery,
-} = cryptoGecko
+export const { useGetCryptosQuery } = cryptoGecko

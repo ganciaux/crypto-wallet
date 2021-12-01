@@ -10,7 +10,9 @@ import {
   Navbar,
 } from './components'
 import './App.css'
-import Cryptolist from './components/Cryptolist'
+import Cryptolist from './components/Cryptolistgecko'
+import Cryptolistpaprika from './components/Cryptolistpaprika'
+import Cryptolistgecko from './components/Cryptolistgecko'
 
 const App = () => (
   <div className="app">
@@ -24,8 +26,11 @@ const App = () => (
             <Route exact path="/">
               <Homepage />
             </Route>
-            <Route exact path="/list">
-              <Cryptolist />
+            <Route exact path="/paprika">
+              <Cryptolistpaprika />
+            </Route>
+            <Route exact path="/crypto.com">
+              <Cryptolistgecko />
             </Route>
             <Route exact path="/exchanges">
               <Exchanges />
