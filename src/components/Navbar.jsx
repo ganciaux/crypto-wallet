@@ -40,12 +40,13 @@ const Navbar = () => {
         <Typography.Title level={2} className="logo">
           <Link to="/">Cryptoverse</Link>
         </Typography.Title>
-        {/*<Button
+        <Button
           className="menu-control-container"
           onClick={() => setActiveMenu(!activeMenu)}
         >
           <MenuOutlined />
-        </Button>*/}
+        </Button>
+        }
       </div>
       <Menu theme="dark">
         <Menu.Item icon={<HomeOutlined />}>

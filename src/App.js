@@ -10,7 +10,6 @@ import {
   Navbar,
 } from './components'
 import './App.css'
-import Cryptolist from './components/Cryptolistgecko'
 import Cryptolistpaprika from './components/Cryptolistpaprika'
 import Cryptolistgecko from './components/Cryptolistgecko'
 

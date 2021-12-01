@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
-import { Card, Row, Col, Input } from 'antd'
+import { Card, Row, Col } from 'antd'
 
 import { useGetCryptosQuery } from '../services/cryptoPaprika'
 import Loader from './Loader'

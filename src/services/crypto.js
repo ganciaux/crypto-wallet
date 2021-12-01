@@ -6,70 +6,74 @@ const formatValue = (string) => {
   else return value
 }
 
-const getCurrencyTotal = (currency, filter = {}) => {
-  const total = { crypto: 0.0, euro: 0.0 }
-  const { key, value } = filter
+const getCurrencyTotal = (currency) => {
+  const total = { coins: 0.0, fiat: {euro: 0.0, usd:0.0}, profit:0.0 }
+
   currency.operations.forEach((operation) => {
-    let sum = true
-    if (key !== undefined && value !== undefined) {
-      if (operation[key] === value) {
-        sum = false
-      }
-    }
-    if (sum === true) {
-      if (operation['Currency'] === currency.label) {
-        total.crypto += formatValue(operation['Amount'])
+    if (operation['Transaction Kind']!=='lockup_lock')
+    {
+      if (operation['Currency'] === currency.symbol) {
+        total.coins += formatValue(operation['Amount'])
         if (
           operation['To Currency'].length > 0 &&
-          operation['To Currency'] !== currency.label &&
+          operation['To Currency'] !== currency.symbol &&
           formatValue(operation['Amount']) < 0
         ) {
-          total.euro -= formatValue(operation['Native Amount']).toFixed(2)
+          total.fiat.euro -= formatValue(operation['Native Amount'])
+          total.fiat.usd -= formatValue(operation['Native Amount (in USD)'])
         } else {
-          total.euro += formatValue(operation['Native Amount']).toFixed(2)
+          total.fiat.euro += formatValue(operation['Native Amount'])
+          total.fiat.usd += formatValue(operation['Native Amount (in USD)'])
         }
-      } else if (operation['To Currency'] === currency.label) {
-        total.crypto += formatValue(operation['To Amount'])
-        total.euro += formatValue(operation['Native Amount'])
+      } else if (operation['To Currency'] === currency.symbol) {
+        total.coins += formatValue(operation['To Amount'])
+        total.fiat.euro += formatValue(operation['Native Amount'])
+        total.fiat.usd += formatValue(operation['Native Amount (in USD)'])
+      } else{
+        /* */
       }
+      console.log('getCurrencyTotal: ', currency.symbol, ': ', total);
     }
   })
+  
   return total
 }
 
-const getTotal = (operations, data, filter = {}) => {
-  const { key, value } = filter
-  const total = operations.reduce(function (acc, cur) {
-    if (key !== undefined && value !== undefined) {
-      if (cur[key] === value) {
-        return acc + formatValue(cur[data])
-      } else return acc
-    } else {
-      return acc + formatValue(cur[data])
-    }
-  }, 0.0)
-  return total.toFixed(2)
+const getTotal = (operations) => {
+  const total = operations.reduce((acc, cur) => {
+    if (cur['Transaction Kind']==='crypto_purchase'){
+      const euro=acc['euro']+formatValue(cur['Native Amount']);
+      const usd=acc['usd']+formatValue(cur['Native Amount (in USD)']);
+      console.log(cur['Transaction Kind'], ': ', cur['Transaction Description'], ': ', cur['Amount'])
+      return {euro, usd}
+    } else
+      return acc;
+    }, {euro:0.0, usd:0.0})
+  return total
 }
-
+	
 const operationsSet = (result, value, key) => {
   if (value[key].length > 0) {
-    const data = result.find((data) => data['label'] === value[key])
+    const data = result.find((data) => data['symbol'] === value[key])
     if (data === undefined) {
-      result.push({ label: value[key], operations: [{ ...value }] })
+      result.push({ symbol: value[key], operations: [{ ...value }] })
     } else {
       data['operations'].push(value)
     }
   }
 }
 
-export const read = (data) => {
+const read = (file) => {
   let headers = []
   let result = {
-    operations: [],
-    currencies: [],
-    transactionKind: [],
-    total_purchase: 0.0,
+    currencies: {
+      coins:[],
+      total_purchase: 0.0,
+    },
+    history:[],
   }
+
+  const data = fs.readFileSync(`${__dirname}${file}`, 'utf8')
 
   const lines = data.toString().split('\r\n')
   lines.forEach((line, index) => {
@@ -82,36 +86,35 @@ export const read = (data) => {
           (acc, cur, index) => ({ ...acc, [headers[index]]: cur }),
           {},
         )
-        operationsSet(result.currencies, cell, 'Currency')
-        operationsSet(result.currencies, cell, 'To Currency')
-        operationsSet(result.transactionKind, cell, 'Transaction Kind')
-        result.operations.push(cell)
+        operationsSet(result.currencies.coins, cell, 'Currency')
+        operationsSet(result.currencies.coins, cell, 'To Currency')
+        result.history.push(cell)
       }
     }
   })
 
-  result.currencies.forEach((currency) => {
-    currency.total = getCurrencyTotal(currency, {
-      key: 'Transaction Kind',
-      value: 'lockup_lock',
-    })
+  result.currencies.coins.forEach((coin) => {
+    coin.total = getCurrencyTotal(coin)
   })
-
-  result.total_purchase = getTotal(result.operations, 'Native Amount', {
-    key: 'Transaction Kind',
-    value: 'crypto_purchase',
-  })
+  
+  result.currencies.total_purchase = getTotal(result.history)
 
   return result
 }
 
-export const write = (file, data) => {
+const write = (file, data) => {
   fs.writeFile(`${__dirname}${file}`, JSON.stringify(data), (err) => {
     if (err) {
       console.error(err)
       return
     }
+    else{
+      console.log(`${__dirname}${file}: success`)
+    }
   })
 }
 
-//const data = fs.readFileSync(`${__dirname}${file}`, 'utf8')
+const data = read(`/../data/crypto_transactions_record.csv`, 'utf8')
+
+write('/../data/crypto_com_currencies.json', data.currencies)
+write('/../data/crypto_com_history.json', data.history)
