@@ -46,7 +46,7 @@ const Navbar = () => {
         >
           <MenuOutlined />
         </Button>
-        }
+        )
       </div>
       <Menu theme="dark">
         <Menu.Item icon={<HomeOutlined />}>

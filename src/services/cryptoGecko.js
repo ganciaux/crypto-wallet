@@ -6,7 +6,7 @@ const cryptoGeckoHeaders = {
 }
 
 const ids =
-  'crypto-com-chain,casper-network,solana,elrond-erd-2,bitcoin,chiliz,vechain,benqi,the-sandbox,gala,decentraland,stellar,avalanche-2,enjincoin,wax,theta-token,shiba-inu,uniswap,dogecoin,fantom,cardano,holotoken,ethereum'
+  'crypto-com-chain,casper-network,solana,elrond-erd-2,bitcoin,chiliz,vechain,benqi,the-sandbox,gala,decentraland,stellar,avalanche-2,enjincoin,wax,theta-token,shiba-inu,uniswap,dogecoin,fantom,cardano,holotoken,ethereum,waltonchain,usd-coin'
 
 const baseUrl = 'https://api.coingecko.com/api/v3'
 

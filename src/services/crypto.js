@@ -7,11 +7,10 @@ const formatValue = (string) => {
 }
 
 const getCurrencyTotal = (currency) => {
-  const total = { coins: 0.0, fiat: {euro: 0.0, usd:0.0}, profit:0.0 }
+  const total = { coins: 0.0, fiat: { euro: 0.0, usd: 0.0 } }
 
   currency.operations.forEach((operation) => {
-    if (operation['Transaction Kind']!=='lockup_lock')
-    {
+    if (operation['Transaction Kind'] !== 'lockup_lock') {
       if (operation['Currency'] === currency.symbol) {
         total.coins += formatValue(operation['Amount'])
         if (
@@ -29,29 +28,37 @@ const getCurrencyTotal = (currency) => {
         total.coins += formatValue(operation['To Amount'])
         total.fiat.euro += formatValue(operation['Native Amount'])
         total.fiat.usd += formatValue(operation['Native Amount (in USD)'])
-      } else{
+      } else {
         /* */
       }
-      console.log('getCurrencyTotal: ', currency.symbol, ': ', total);
+      console.log('getCurrencyTotal: ', currency.symbol, ': ', total)
     }
   })
-  
+
   return total
 }
 
 const getTotal = (operations) => {
-  const total = operations.reduce((acc, cur) => {
-    if (cur['Transaction Kind']==='crypto_purchase'){
-      const euro=acc['euro']+formatValue(cur['Native Amount']);
-      const usd=acc['usd']+formatValue(cur['Native Amount (in USD)']);
-      console.log(cur['Transaction Kind'], ': ', cur['Transaction Description'], ': ', cur['Amount'])
-      return {euro, usd}
-    } else
-      return acc;
-    }, {euro:0.0, usd:0.0})
+  const total = operations.reduce(
+    (acc, cur) => {
+      if (cur['Transaction Kind'] === 'crypto_purchase') {
+        const euro = acc['euro'] + formatValue(cur['Native Amount'])
+        const usd = acc['usd'] + formatValue(cur['Native Amount (in USD)'])
+        console.log(
+          cur['Transaction Kind'],
+          ': ',
+          cur['Transaction Description'],
+          ': ',
+          cur['Amount'],
+        )
+        return { euro, usd }
+      } else return acc
+    },
+    { euro: 0.0, usd: 0.0 },
+  )
   return total
 }
-	
+
 const operationsSet = (result, value, key) => {
   if (value[key].length > 0) {
     const data = result.find((data) => data['symbol'] === value[key])
@@ -67,10 +74,10 @@ const read = (file) => {
   let headers = []
   let result = {
     currencies: {
-      coins:[],
+      coins: [],
       total_purchase: 0.0,
     },
-    history:[],
+    history: [],
   }
 
   const data = fs.readFileSync(`${__dirname}${file}`, 'utf8')
@@ -96,7 +103,7 @@ const read = (file) => {
   result.currencies.coins.forEach((coin) => {
     coin.total = getCurrencyTotal(coin)
   })
-  
+
   result.currencies.total_purchase = getTotal(result.history)
 
   return result
@@ -107,8 +114,7 @@ const write = (file, data) => {
     if (err) {
       console.error(err)
       return
-    }
-    else{
+    } else {
       console.log(`${__dirname}${file}: success`)
     }
   })
