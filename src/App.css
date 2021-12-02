@@ -386,12 +386,10 @@ a:hover {
 
 .crypto-text-profit {
   color: #35f39b !important;
-  font-size: large;
   padding-left: 10px;
 }
 
 .crypto-text-loss {
   color: #ff5656 !important;
-  font-size: large;
   padding-left: 10px;
 }

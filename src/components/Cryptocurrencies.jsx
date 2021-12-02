@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import millify from 'millify'
 import { Link } from 'react-router-dom'
-import { Card, Row, Col, Input } from 'antd'
+import { Card, Row, Col, Input, Pagination } from 'antd'
 
 import { useGetCryptosQuery } from '../services/cryptoApi'
 import Loader from './Loader'
 
 const Cryptocurrencies = ({ simplified }) => {
-  const count = simplified ? 10 : 100
-  const offset = 50
-  const { data: cryptosList, isFetching } = useGetCryptosQuery({
-    count,
-    offset,
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 10,
+    count: simplified ? 10 : 100,
+    offset: 0,
   })
+  console.log('pagination: ', pagination)
   const [cryptos, setCryptos] = useState()
   const [searchTerm, setSearchTerm] = useState('')
+  const { data: cryptosList, isFetching } = useGetCryptosQuery(pagination)
 
-  console.log(cryptosList)
+  const handlePageChange = (page, pageSize) => {
+    setPagination({ page, pageSize, count: pageSize, offset: page * pageSize })
+    console.log('change pagination: ', pagination)
+  }
 
   useEffect(() => {
     //setCryptos(cryptosList?.data?.coins)
@@ -63,6 +68,14 @@ const Cryptocurrencies = ({ simplified }) => {
           </Col>
         ))}
       </Row>
+      <br />
+      <Pagination
+        current={pagination.page}
+        pageSize={pagination.pageSize}
+        defaultCurrent={1}
+        total={14000}
+        onChange={handlePageChange}
+      />
     </>
   )
 }

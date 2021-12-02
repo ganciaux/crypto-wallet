@@ -7,31 +7,44 @@ const formatValue = (string) => {
 }
 
 const getCurrencyTotal = (currency) => {
-  const total = { coins: 0.0, fiat: { euro: 0.0, usd: 0.0 } }
-
+  const total = { coins: 0.0, fiat: { euro: 0.0, usd: 0.0 }, purchases:0.0, sales:0.0 }
+  
   currency.operations.forEach((operation) => {
     if (operation['Transaction Kind'] !== 'lockup_lock') {
+      const amount=formatValue(operation['Amount']);
+      const to_amount=formatValue(operation['To Amount']);
+      const native_amount=formatValue(operation['Native Amount']);
+      const native_amount_usd=formatValue(operation['Native Amount (in USD)']);
       if (operation['Currency'] === currency.symbol) {
-        total.coins += formatValue(operation['Amount'])
+        total.coins += amount
+        if (amount>0){
+          total.purchases+=native_amount
+        }else{
+          if ( operation['To Currency'].length > 0 &&
+          operation['To Currency'] !== currency.symbol)
+            total.sales-=native_amount
+          else
+          total.sales+=native_amount
+        }
         if (
           operation['To Currency'].length > 0 &&
           operation['To Currency'] !== currency.symbol &&
-          formatValue(operation['Amount']) < 0
+          amount < 0
         ) {
-          total.fiat.euro -= formatValue(operation['Native Amount'])
-          total.fiat.usd -= formatValue(operation['Native Amount (in USD)'])
+          total.fiat.euro -= native_amount
+          total.fiat.usd -= native_amount_usd
         } else {
-          total.fiat.euro += formatValue(operation['Native Amount'])
-          total.fiat.usd += formatValue(operation['Native Amount (in USD)'])
+          total.fiat.euro += native_amount
+          total.fiat.usd += native_amount_usd
         }
       } else if (operation['To Currency'] === currency.symbol) {
-        total.coins += formatValue(operation['To Amount'])
-        total.fiat.euro += formatValue(operation['Native Amount'])
-        total.fiat.usd += formatValue(operation['Native Amount (in USD)'])
+        total.coins += to_amount
+        total.purchases+=native_amount
+        total.fiat.euro += native_amount
+        total.fiat.usd += native_amount_usd
       } else {
         /* */
       }
-      console.log('getCurrencyTotal: ', currency.symbol, ': ', total)
     }
   })
 
