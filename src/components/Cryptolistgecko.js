@@ -19,10 +19,11 @@ const Cryptocurrencies = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [result, setResult] = useState({})
   const [profitAndLoss, setProfitAndLoss] = useState('all')
-  const [sortingBy, setSortingBy] = useState('profit')
+  const [sortingBy, setSortingBy] = useState('current')
 
   function compare(a, b) {
-    console.log(a)
+    console.log(sortingBy, a.name,a.operations.total.current, b.name, b.operations.total.current)
+
     if (sortingBy==='name'){
       if(a.name < b.name) { return -1; }
       if(a.name > b.name) { return 1; }
@@ -31,8 +32,8 @@ const Cryptocurrencies = () => {
       return b.operations.total.profit-a.operations.total.profit
     } else if (sortingBy==='rank'){
       return a.market_cap_rank-b.market_cap_rank
-    } else {
-      return a.operations.total.current - b.operations.total.current
+    } else if (sortingBy==='current'){
+      return b.operations.total.current - a.operations.total.current
     }
 
   }
@@ -146,7 +147,7 @@ const Cryptocurrencies = () => {
         <Col xs={24} sm={12} lg={6}>
           <Select
             style={{ width: '50%' }}
-            defaultValue="all"
+            defaultValue={profitAndLoss}
             onChange={handlePage}
           >
             <Option value="loss">loss</Option>
@@ -155,7 +156,7 @@ const Cryptocurrencies = () => {
           </Select>
           <Select
             style={{ width: '50%' }}
-            defaultValue="current"
+            defaultValue={sortingBy}
             onChange={handleSortingBy}
           >
             <Option value="name">sort by name</Option>
