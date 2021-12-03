@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import millify from 'millify'
 import { Link } from 'react-router-dom'
-import { Card, Row, Col, Input, Typography, Select, Divider } from 'antd'
+import {
+  Card,
+  Row,
+  Col,
+  Input,
+  Typography,
+  Select,
+  Divider,
+  Modal,
+  Button,
+} from 'antd'
 import { RiseOutlined, FallOutlined } from '@ant-design/icons'
 import CryptoTable from './CryptoTable'
 
@@ -9,6 +19,7 @@ import { useGetCryptosQuery } from '../services/cryptoGecko'
 import Loader from './Loader'
 
 import crypto_com_currencies from '../data/crypto_com_currencies.json'
+import CryptoModal from './CryptoModal'
 
 const Cryptocurrencies = () => {
   const { Option } = Select
@@ -20,22 +31,48 @@ const Cryptocurrencies = () => {
   const [result, setResult] = useState({})
   const [profitAndLoss, setProfitAndLoss] = useState('all')
   const [sortingBy, setSortingBy] = useState('current')
+  const [coinId, setCoinId] = useState(1)
+
+  const [isModalVisible, setIsModalVisible] = useState(false)
+
+  const showModal = (id) => {
+    console.log('showModal:', id)
+    setIsModalVisible(true)
+    setCoinId(id)
+  }
+
+  const handleOk = () => {
+    setIsModalVisible(false)
+  }
+
+  const handleCancel = () => {
+    setIsModalVisible(false)
+  }
 
   function compare(a, b) {
-    console.log(sortingBy, a.name,a.operations.total.current, b.name, b.operations.total.current)
+    console.log(
+      sortingBy,
+      a.name,
+      a.operations.total.current,
+      b.name,
+      b.operations.total.current,
+    )
 
-    if (sortingBy==='name'){
-      if(a.name < b.name) { return -1; }
-      if(a.name > b.name) { return 1; }
-      return 0;
-    } else if (sortingBy==='profit'){
-      return b.operations.total.profit-a.operations.total.profit
-    } else if (sortingBy==='rank'){
-      return a.market_cap_rank-b.market_cap_rank
-    } else if (sortingBy==='current'){
+    if (sortingBy === 'name') {
+      if (a.name < b.name) {
+        return -1
+      }
+      if (a.name > b.name) {
+        return 1
+      }
+      return 0
+    } else if (sortingBy === 'profit') {
+      return b.operations.total.profit - a.operations.total.profit
+    } else if (sortingBy === 'rank') {
+      return a.market_cap_rank - b.market_cap_rank
+    } else if (sortingBy === 'current') {
       return b.operations.total.current - a.operations.total.current
     }
-
   }
 
   useEffect(() => {
@@ -83,9 +120,10 @@ const Cryptocurrencies = () => {
         operations.total.percent =
           (operations.total.profit / operations.total.fiat.euro) * 100
 
-          operations.total.current = operations.total.profit + operations.total.fiat.euro
+        operations.total.current =
+          operations.total.profit + operations.total.fiat.euro
 
-          /*
+        /*
         operations.total.profit_all =
           (operations.total.coins * currency.current_price) -
           operations.total.purchases +
@@ -130,9 +168,7 @@ const Cryptocurrencies = () => {
           ).toFixed(2)}
           €
         </p>
-        <p>
-          Currencies: {crypto_com_currencies.coins.length}
-        </p>
+        <p>Currencies: {crypto_com_currencies.coins.length}</p>
       </Card>
 
       <Divider />
@@ -165,7 +201,6 @@ const Cryptocurrencies = () => {
             <Option value="current">sort by current</Option>
           </Select>
         </Col>
-        
       </Row>
       <br />
       <Row gutter={[32, 32]} className="crypto-card-container">
@@ -199,9 +234,7 @@ const Cryptocurrencies = () => {
                   {' / '}
                   {currency.operations?.total?.fiat.usd.toFixed(2)}$
                 </p>
-                <p>
-                  Current: {currency.operations.total.current.toFixed(2)}€
-                </p>
+                <p>Current: {currency.operations.total.current.toFixed(2)}€</p>
                 <p>
                   {currency.operations?.total?.profit > 0
                     ? 'Profit: '
@@ -218,10 +251,22 @@ const Cryptocurrencies = () => {
                 */}
               </Card>
             </Link>
+            <Button type="primary" onClick={() => showModal(currency.id)}>
+              Details
+            </Button>
           </Col>
         ))}
       </Row>
       {/*<CryptoTable cryptos={cryptosWithOperations}></CryptoTable>*/}
+      <Modal
+        title="Crypto details"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        coinId: {coinId}
+        {/*<CryptoModal coinId={coinId} />*/}
+      </Modal>
     </>
   )
 }

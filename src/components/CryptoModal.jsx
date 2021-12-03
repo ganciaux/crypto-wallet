@@ -25,8 +25,7 @@ import LineChart from './LineChart'
 const { Title, Text } = Typography
 const { Option } = Select
 
-const CryptoDetails = () => {
-  const { coinId } = useParams()
+const CryptoModal = ({ coinId }) => {
   const [timeperiod, setTimeperiod] = useState('7d')
   const { data, isFetching } = useGetCryptoDetailsQuery(coinId)
   const { data: coinHistory } = useGetCryptoHistoryQuery({ coinId, timeperiod })
@@ -187,4 +186,4 @@ const CryptoDetails = () => {
   )
 }
 
-export default CryptoDetails
+export default CryptoModal
