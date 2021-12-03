@@ -3,6 +3,7 @@ import millify from 'millify'
 import { Link } from 'react-router-dom'
 import {
   Card,
+  Badge,
   Row,
   Col,
   Input,
@@ -16,6 +17,7 @@ import { RiseOutlined, FallOutlined } from '@ant-design/icons'
 import CryptoTable from './CryptoTable'
 
 import { useGetCryptosQuery } from '../services/cryptoGecko'
+import { useGetCryptosQuery as coinranking  } from '../services/cryptoCoinranking'
 import Loader from './Loader'
 
 import crypto_com_currencies from '../data/crypto_com_currencies.json'
@@ -24,6 +26,7 @@ import CryptoModal from './CryptoModal'
 const Cryptocurrencies = () => {
   const { Option } = Select
   const { data: cryptosApi, isFetching, isSuccess } = useGetCryptosQuery()
+  const { data: cryptosApiCoin } = coinranking()
   const [cryptos, setCryptos] = useState()
   const [cryptosWithOperations, setCryptosWithOperations] = useState([])
   const [operationIsLoaded, setOperationIsLoaded] = useState(false)
@@ -36,9 +39,9 @@ const Cryptocurrencies = () => {
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   const showModal = (id) => {
-    console.log('showModal:', id)
     setIsModalVisible(true)
     setCoinId(id)
+    console.log(cryptosApiCoin);
   }
 
   const handleOk = () => {
@@ -50,14 +53,6 @@ const Cryptocurrencies = () => {
   }
 
   function compare(a, b) {
-    console.log(
-      sortingBy,
-      a.name,
-      a.operations.total.current,
-      b.name,
-      b.operations.total.current,
-    )
-
     if (sortingBy === 'name') {
       if (a.name < b.name) {
         return -1
@@ -106,7 +101,7 @@ const Cryptocurrencies = () => {
   }, [cryptosWithOperations, searchTerm, profitAndLoss, sortingBy])
 
   if (isFetching) return <Loader />
-
+  
   if (isSuccess && operationIsLoaded === false) {
     const cryptosApiWithOperations = cryptosApi?.map((currency) => {
       const operations = crypto_com_currencies.coins.find(
@@ -143,7 +138,6 @@ const Cryptocurrencies = () => {
 
   function handleSortingBy(value) {
     setSortingBy(value)
-    console.log(`selected ${value}`)
   }
 
   return (
@@ -158,6 +152,8 @@ const Cryptocurrencies = () => {
             {result.profit?.toFixed(2)}€
           </span>
           <span className="crypto-text-loss">{result.loss?.toFixed(2)}€</span>
+          <Badge count={result.loss?.toFixed(2)} style={{backgroundColor:"#a0d911"}}/>
+          <Badge count={result.loss?.toFixed(2)} style={{backgroundColor:"##f5222d"}}/>
         </p>
         <p>
           Total:{' '}
@@ -206,7 +202,7 @@ const Cryptocurrencies = () => {
       <Row gutter={[32, 32]} className="crypto-card-container">
         {cryptos?.map((currency) => (
           <Col xs={24} sm={12} lg={6} className="crypto-card" key={currency.id}>
-            <Link key={currency.id} to={`/crypto/${currency.id}`}>
+            
               <Card
                 className={
                   currency.operations?.total?.profit > 0
@@ -223,6 +219,9 @@ const Cryptocurrencies = () => {
                 }
                 hoverable
               >
+                <p>Name: {currency.name}</p>
+                <p>symbol: {currency.symbol}</p>
+                <p>id: {currency.id}</p>
                 <p>Price: {currency.current_price}€</p>
                 <p>Market Cap: {millify(currency.market_cap)}</p>
                 <p>Daily Change: {currency.price_change_percentage_24h}%</p>
@@ -250,12 +249,16 @@ const Cryptocurrencies = () => {
                 </p>
                 */}
               </Card>
-            </Link>
+            
             <Button type="primary" onClick={() => showModal(currency.id)}>
               Details
             </Button>
           </Col>
         ))}
+        [
+        {cryptos?.map((currency) => (
+          <p>{`symbols[]=${currency.symbol},`}</p>))}
+          ]
       </Row>
       {/*<CryptoTable cryptos={cryptosWithOperations}></CryptoTable>*/}
       <Modal
@@ -263,6 +266,7 @@ const Cryptocurrencies = () => {
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
+        width={"75%"}
       >
         coinId: {coinId}
         {/*<CryptoModal coinId={coinId} />*/}

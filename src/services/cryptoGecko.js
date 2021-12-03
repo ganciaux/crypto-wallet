@@ -3,7 +3,9 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 const cryptoGeckoHeaders = {
   'x-rapidapi-host': 'coinGecko1.p.rapidapi.com',
   'x-rapidapi-key': '7ce4dbab36mshdd18c65adaaf6aap19c22ajsn1a50b8beab17',
-}
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+  'Access-Control-Allow-Methods':'GET, POST, PUT, DELETE, OPTIONS'}
 
 const ids =
   'crypto-com-chain,casper-network,solana,elrond-erd-2,bitcoin,chiliz,vechain,benqi,the-sandbox,gala,decentraland,stellar,avalanche-2,enjincoin,wax,theta-token,shiba-inu,uniswap,dogecoin,fantom,cardano,holotoken,ethereum,waltonchain,usd-coin'
