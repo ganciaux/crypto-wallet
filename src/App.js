@@ -12,6 +12,7 @@ import {
 import './App.css'
 import Cryptolistpaprika from './components/Cryptolistpaprika'
 import Cryptolistgecko from './components/Cryptolistgecko'
+import Cryptolistcoinranking from './components/Cryptolistcoinranking'
 
 const App = () => (
   <div className="app">
@@ -30,6 +31,9 @@ const App = () => (
             </Route>
             <Route exact path="/crypto.com">
               <Cryptolistgecko />
+            </Route>
+            <Route exact path="/coinranking">
+              <Cryptolistcoinranking />
             </Route>
             <Route exact path="/exchanges">
               <Exchanges />

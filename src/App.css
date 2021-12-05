@@ -385,11 +385,33 @@ a:hover {
 }
 
 .crypto-text-profit {
-  color: #35f39b !important;
-  padding-left: 10px;
+  background-color: #35f39b !important;
+  color: white;
+  padding: 4px;
+  margin: 4px;
+  border-radius: 5px;
 }
 
 .crypto-text-loss {
-  color: #ff5656 !important;
-  padding-left: 10px;
+  background-color: #ff5656 !important;
+  color: white;
+  padding: 4px;
+  margin: 4px;
+
+  border-radius: 5px;
+}
+
+.crypto-table th {
+  background-color: lightgray;
+}
+
+.crypto-table th,
+td {
+  padding: 5px;
+  text-align: left;
+  border: solid black 1px;
+}
+
+.crypto-table tr:hover {
+  background-color: lightblue;
 }

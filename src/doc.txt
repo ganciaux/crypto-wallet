@@ -1,1 +1,4 @@
 crypto-com-chain,casper-network,solana,elrond-erd-2,bitcoin,chiliz,vechain,benqi,the-sandbox,gala,decentraland,stellar,avalanche-2,enjincoin,wax,theta-token,shiba-inu,uniswap,dogecoin,fantom,cardano,holotoken,ethereum
+https://github.com/adrianhajdin/project_cryptoverse/blob/main/src/components/LineChart.jsx
+https://www.coingecko.com/en/api/documentation
+https://developers.coinranking.com/api/documentation

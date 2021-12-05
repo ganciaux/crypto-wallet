@@ -1,34 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import millify from 'millify'
-import { Link } from 'react-router-dom'
 import {
   Card,
   Badge,
   Row,
   Col,
   Input,
-  Typography,
   Select,
   Divider,
   Modal,
   Button,
 } from 'antd'
-import { RiseOutlined, FallOutlined } from '@ant-design/icons'
-import CryptoTable from './CryptoTable'
 
-import { useGetCryptosQuery } from '../services/cryptoGecko'
-import { useGetCryptosQuery as coinranking } from '../services/cryptoCoinranking'
+import { useGetCryptosQuery } from '../services/cryptoCoinranking'
 import Loader from './Loader'
 
 import crypto_com_currencies from '../data/crypto_com_currencies.json'
 import CryptoModal from './CryptoModal'
-import { getCryptoApi } from '../data/CryptoApi'
-import CryptoOperations from './CryptoOperations'
 
 const Cryptocurrencies = () => {
   const { Option } = Select
   const { data: cryptosApi, isFetching, isSuccess } = useGetCryptosQuery()
-  const { data: cryptosApiCoin } = coinranking()
   const [cryptos, setCryptos] = useState()
   const [cryptosWithOperations, setCryptosWithOperations] = useState([])
   const [operationIsLoaded, setOperationIsLoaded] = useState(false)
@@ -37,24 +29,12 @@ const Cryptocurrencies = () => {
   const [profitAndLoss, setProfitAndLoss] = useState('all')
   const [sortingBy, setSortingBy] = useState('current')
   const [coinId, setCoinId] = useState(1)
-  const [operations, setOperations] = useState('details')
-  const [currency, setCurrency] = useState({})
 
   const [isModalVisible, setIsModalVisible] = useState(false)
 
-  const showModal = (current, mode) => {
-    const crypto = getCryptoApi(current.symbol)
+  const showModal = (id) => {
     setIsModalVisible(true)
-    //setCoinId(crypto.coinranking)
-    setCoinId(1)
-    setOperations(mode)
-    setCurrency(
-      cryptosWithOperations.find((cur) => {
-        console.log(cur.symbol, current.symbol)
-        return cur.symbol === current.symbol
-      }),
-    )
-    console.log(getCryptoApi(current.symbol))
+    setCoinId(id)
   }
 
   const handleOk = () => {
@@ -79,11 +59,14 @@ const Cryptocurrencies = () => {
     } else if (sortingBy === 'rank') {
       return a.market_cap_rank - b.market_cap_rank
     } else if (sortingBy === 'current') {
-      return b.operations.total.current - a.operations.total.current
+      return false
+      //return b.operations?.total?.current - a.operations?.total?.current
     }
   }
 
   useEffect(() => {
+    setCryptos(cryptosApi?.data?.coins)
+
     const filteredData = cryptosWithOperations?.filter(
       (item) =>
         (item.name.toLowerCase().includes(searchTerm) ||
@@ -116,31 +99,26 @@ const Cryptocurrencies = () => {
   if (isFetching) return <Loader />
 
   if (isSuccess && operationIsLoaded === false) {
-    const cryptosApiWithOperations = cryptosApi?.map((currency) => {
-      const operations = crypto_com_currencies.coins.find(
-        (curr) => curr.symbol.toLowerCase() === currency.symbol.toLowerCase(),
-      )
-      if (operations) {
-        operations.total.profit = parseFloat(
-          operations.total.coins * currency.current_price -
-            operations.total.fiat.euro,
+    const cryptosApiWithOperations = cryptosApi?.data?.coins?.map(
+      (currency) => {
+        const operations = crypto_com_currencies.coins.find(
+          (curr) => curr.symbol.toLowerCase() === currency.symbol.toLowerCase(),
         )
-        operations.total.percent =
-          (operations.total.profit / operations.total.fiat.euro) * 100
+        if (operations) {
+          operations.total.profit = parseFloat(
+            operations.total.coins * currency.price -
+              operations.total.fiat.euro,
+          )
+          operations.total.percent =
+            (operations.total.profit / operations.total.fiat.euro) * 100
 
-        operations.total.current =
-          operations.total.profit + operations.total.fiat.euro
+          operations.total.current =
+            operations.total.profit + operations.total.fiat.euro
+        }
 
-        /*
-        operations.total.profit_all =
-          (operations.total.coins * currency.current_price) -
-          operations.total.purchases +
-          operations.total.sales
-          */
-      }
-
-      return { ...currency, operations }
-    })
+        return { ...currency, operations }
+      },
+    )
     setOperationIsLoaded(true)
     setCryptosWithOperations(cryptosApiWithOperations)
   }
@@ -165,6 +143,14 @@ const Cryptocurrencies = () => {
             {result.profit?.toFixed(2)}€
           </span>
           <span className="crypto-text-loss">{result.loss?.toFixed(2)}€</span>
+          <Badge
+            count={result.loss?.toFixed(2)}
+            style={{ backgroundColor: '#a0d911' }}
+          />
+          <Badge
+            count={result.loss?.toFixed(2)}
+            style={{ backgroundColor: '##f5222d' }}
+          />
         </p>
         <p>
           Total:{' '}
@@ -212,14 +198,20 @@ const Cryptocurrencies = () => {
       <br />
       <Row gutter={[32, 32]} className="crypto-card-container">
         {cryptos?.map((currency) => (
-          <Col xs={24} sm={12} lg={6} className="crypto-card" key={currency.id}>
+          <Col
+            xs={24}
+            sm={12}
+            lg={6}
+            className="crypto-card"
+            key={currency.uuid}
+          >
             <Card
               className={
                 currency.operations?.total?.profit > 0
                   ? 'crypto-profit'
                   : 'crypto-loss'
               }
-              title={`${currency.market_cap_rank}. ${currency.name}`}
+              title={`${currency.rank}. ${currency.name}`}
               extra={
                 <img
                   alt="crypto"
@@ -231,8 +223,8 @@ const Cryptocurrencies = () => {
             >
               <p>Name: {currency.name}</p>
               <p>symbol: {currency.symbol}</p>
-              <p>id: {currency.id}</p>
-              <p>Price (Now): {currency.current_price}€</p>
+              <p>id: {currency.uuid}</p>
+              <p>Price (Now): {currency.price}€</p>
               <p>
                 Price (Buy):{' '}
                 {(
@@ -241,8 +233,8 @@ const Cryptocurrencies = () => {
                 ).toFixed(2)}
                 €
               </p>
-              <p>Market Cap: {millify(currency.market_cap)}</p>
-              <p>Daily Change: {currency.price_change_percentage_24h}%</p>
+              <p>Market Cap: {millify(currency.marketCap)}</p>
+              <p>Daily Change: {currency.change}%</p>
               <p>
                 Crypto: {currency.operations?.total?.coins} {currency.symbol}
               </p>
@@ -250,49 +242,30 @@ const Cryptocurrencies = () => {
                 Buy: {currency.operations?.total?.fiat.euro.toFixed(2)}€{' / '}
                 {currency.operations?.total?.fiat.usd.toFixed(2)}$
               </p>
-              <p>Current: {currency.operations.total.current.toFixed(2)}€</p>
+              <p>
+                Current: {/*currency.operations.total.current.toFixed(2)*/}€
+              </p>
               <p>
                 {currency.operations?.total?.profit > 0 ? 'Profit: ' : 'Loss: '}
                 {currency.operations?.total?.profit?.toFixed(2)} (
                 {currency.operations?.total?.percent?.toFixed(2)}%)
               </p>
-              {/*
-                <p>
-                {currency.operations?.operations.map((operation) => (
-                <>{operation['Timestamp (UTC)']};{operation['Transaction Kind']};{operation['Currency']};{operation['Amount']};{operation['To Currency']};{operation['To Amount']}<br/></>
-                ))}
-                </p>
-                */}
             </Card>
-
-            <Button
-              type="primary"
-              onClick={() => showModal(currency, 'details')}
-            >
+            <Button type="primary" onClick={() => showModal(currency.uiid)}>
               Details
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => showModal(currency, 'operations')}
-            >
-              Operations
             </Button>
           </Col>
         ))}
       </Row>
-      {/*<CryptoTable cryptos={cryptosWithOperations}></CryptoTable>*/}
       <Modal
         title="Crypto details"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
-        width={'85%'}
+        width={'75%'}
       >
-        {operations === 'details' ? (
-          <CryptoModal coinId={coinId} />
-        ) : (
-          <CryptoOperations currency={currency} />
-        )}
+        coinId: {coinId}
+        {<CryptoModal coinId={coinId} />}
       </Modal>
     </>
   )
