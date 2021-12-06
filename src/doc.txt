@@ -2,3 +2,12 @@ crypto-com-chain,casper-network,solana,elrond-erd-2,bitcoin,chiliz,vechain,benqi
 https://github.com/adrianhajdin/project_cryptoverse/blob/main/src/components/LineChart.jsx
 https://www.coingecko.com/en/api/documentation
 https://developers.coinranking.com/api/documentation
+
+Production	Yes	https://rest.coinapi.io/
+Production	No	http://rest.coinapi.io/
+Sandbox	Yes	https://rest-sandbox.coinapi.io/
+Sandbox	No	http://rest-sandbox.coinapi.io/
+
+X-CoinAPI-Key
+https://docs.coinapi.io/#list-all-assets-get
+https://rest.coinapi.io/v1/assets/?filter_asset_id=CRO;QI;EGLD;CSPR;SOL;ETH;BTC;LTC;ATOM;YGG;ALICE;CHZ;WTC;VET;SAND;BAT;GALA;MANA;XLM;AVAX;ENJ;THETA;SHIB;UNI;ADA;WAX;DOGE;FTM;HOT;USDC&apikey=BFCA3928-A51C-48DB-B6EE-177DA2C93505
