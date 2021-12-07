@@ -10,9 +10,7 @@ import {
   Navbar,
 } from './components'
 import './App.css'
-import Cryptolistpaprika from './components/Cryptolistpaprika'
 import Cryptolistgecko from './components/Cryptolistgecko'
-import Cryptolistcoinranking from './components/Cryptolistcoinranking'
 import Cryptolistcoinapi from './components/Cryptolistcoinapi'
 
 const App = () => (
@@ -27,14 +25,8 @@ const App = () => (
             <Route exact path="/">
               <Homepage />
             </Route>
-            <Route exact path="/paprika">
-              <Cryptolistpaprika />
-            </Route>
             <Route exact path="/crypto.com">
               <Cryptolistgecko />
-            </Route>
-            <Route exact path="/coinranking">
-              <Cryptolistcoinranking />
             </Route>
             <Route exact path="/coinapi">
               <Cryptolistcoinapi />

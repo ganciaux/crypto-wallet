@@ -61,9 +61,6 @@ const Navbar = () => {
         <Menu.Item icon={<FundOutlined />}>
           <Link to="/coinapi">CoinApi</Link>
         </Menu.Item>
-        <Menu.Item icon={<FundOutlined />}>
-          <Link to="/coinranking">Coinranking</Link>
-        </Menu.Item>
         <Menu.Item icon={<MoneyCollectOutlined />}>
           <Link to="/exchanges">Exchanges</Link>
         </Menu.Item>

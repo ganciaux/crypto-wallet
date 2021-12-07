@@ -13,11 +13,14 @@ export const cryptoCoinApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl }),
   endpoints: (builder) => ({
     getCryptos: builder.query({
-      query: () => {console.log('cryptoCoinApi: getCryptos()'); return createRequest(`/v1/assets/?filter_asset_id=CRO;QI;EGLD;CSPR;SOL;ETH;BTC;LTC;ATOM;YGG;ALICE;CHZ;WTC;VET;SAND;BAT;GALA;MANA;XLM;AVAX;ENJ;THETA;SHIB;UNI;ADA;WAX;DOGE;FTM;HOT;USDC`)},
+      query: () => {
+        console.log('cryptoCoinApi: getCryptos()')
+        return createRequest(
+          `/v1/symbols/?filter_symbol_id=CRO;QI;EGLD;CSPR;SOL;ETH;BTC;LTC;ATOM;YGG;ALICE;CHZ;WTC;VET;SAND;BAT;GALA;MANA;XLM;AVAX;ENJ;THETA;SHIB;UNI;ADA;WAX;DOGE;FTM;HOT;USDC`,
+        )
+      },
     }),
   }),
 })
 
-export const {
-  useGetCryptosQuery,
-} = cryptoCoinApi
+export const { useGetCryptosQuery } = cryptoCoinApi

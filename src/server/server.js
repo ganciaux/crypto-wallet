@@ -17,45 +17,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 
-/* req stands for request, res stands for response */
-app.get('/coins/:params', function (req, res) {
-  const params = req.params.params ? `?${req.params.params}` : ''
-  console.log(params)
-  axios
-    .get(`https://api.coinranking.com/v2/coins${params}`, {
-      headers: {
-        'x-access-token':
-          'coinranking31764015111bc1ca04ddbc0dbac9585de4f1b6c87a13f739',
-      },
-    })
-    .then((response) => {
-      console.log(response.data)
-      console.log('axios')
-      res.json(response.data)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-})
-
-app.get('/suggestions/:params', function (req, res) {
-  const params = req.params.params ? `${req.params.params}` : ''
-  console.log(params)
-  axios
-    .get(`https://api.coinranking.com/v2/search-suggestions?query=${params}`, {
-      headers: {
-        'x-access-token':
-          'coinranking31764015111bc1ca04ddbc0dbac9585de4f1b6c87a13f739',
-      },
-    })
-    .then((response) => {
-      res.json(response.data)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-})
-
 app.get('/test', function (req, res) {
   res.json({ test: 'test' })
 })

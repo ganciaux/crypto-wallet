@@ -17,18 +17,16 @@ import { RiseOutlined, FallOutlined } from '@ant-design/icons'
 import CryptoTable from './CryptoTable'
 
 import { useGetCryptosQuery } from '../services/cryptoGecko'
-import { useGetCryptosQuery as coinranking } from '../services/cryptoCoinranking'
 import Loader from './Loader'
 
 import crypto_com_currencies from '../data/crypto_com_currencies.json'
-import CryptoModal from './CryptoModal'
+import CryptoHistory from './CryptoHistory'
 import { getCryptoApi } from '../data/CryptoApi'
 import CryptoOperations from './CryptoOperations'
 
 const Cryptocurrencies = () => {
   const { Option } = Select
   const { data: cryptosApi, isFetching, isSuccess } = useGetCryptosQuery()
-  const { data: cryptosApiCoin } = coinranking()
   const [cryptos, setCryptos] = useState()
   const [cryptosWithOperations, setCryptosWithOperations] = useState([])
   const [operationIsLoaded, setOperationIsLoaded] = useState(false)
@@ -290,7 +288,7 @@ const Cryptocurrencies = () => {
         width={'85%'}
       >
         {operations === 'details' ? (
-          <CryptoModal coinId={coinId} />
+          <CryptoHistory coinId={coinId} />
         ) : (
           <CryptoOperations currency={currency} />
         )}
