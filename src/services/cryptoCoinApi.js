@@ -4,7 +4,7 @@ const cryptoApiHeaders = {
   'X-CoinAPI-Key': 'BFCA3928-A51C-48DB-B6EE-177DA2C93505',
 }
 
-const baseUrl = 'https://rest-sandbox.coinapi.io'
+const baseUrl = 'https://rest-sandbox.coinapi.io/'
 
 const createRequest = (url) => ({ url, headers: cryptoApiHeaders })
 
@@ -16,7 +16,7 @@ export const cryptoCoinApi = createApi({
       query: () => {
         console.log('cryptoCoinApi: getCryptos()')
         return createRequest(
-          `/v1/symbols/?filter_symbol_id=CRO;QI;EGLD;CSPR;SOL;ETH;BTC;LTC;ATOM;YGG;ALICE;CHZ;WTC;VET;SAND;BAT;GALA;MANA;XLM;AVAX;ENJ;THETA;SHIB;UNI;ADA;WAX;DOGE;FTM;HOT;USDC`,
+          `/v1/assets/?filter_asset_id=CRO;QI;EGLD;CSPR;SOL;ETH;BTC;LTC;ATOM;YGG;ALICE;CHZ;WTC;VET;SAND;BAT;GALA;MANA;XLM;AVAX;ENJ;THETA;SHIB;UNI;ADA;WAX;DOGE;FTM;HOT;USDC`,
         )
       },
     }),
