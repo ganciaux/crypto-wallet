@@ -33,7 +33,10 @@ const CryptoOperations = ({ currency }) => {
                     ? ` (${(
                         parseFloat(operation['Native Amount']) /
                         parseFloat(operation['Amount'])
-                      ).toFixed(3)}€)`
+                      ).toFixed(3)}€, ${(
+                        parseFloat(operation['Native Amount (in USD)']) /
+                        parseFloat(operation['Amount'])
+                      ).toFixed(3)}$)`
                     : ''}
                 </td>
                 <td>{operation['To Currency']}</td>
@@ -43,7 +46,11 @@ const CryptoOperations = ({ currency }) => {
                     ? ` (${(
                         parseFloat(operation['Native Amount']) /
                         parseFloat(operation['To Amount'])
-                      ).toFixed(3)}€)`
+                      ).toFixed(3)}€, 
+                      ${(
+                        parseFloat(operation['Native Amount (in USD)']) /
+                        parseFloat(operation['To Amount'])
+                      ).toFixed(3)}$)`
                     : ''}
                 </td>
                 <td>{operation['Native Currency']}</td>
