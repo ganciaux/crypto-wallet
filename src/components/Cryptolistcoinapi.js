@@ -4,12 +4,23 @@ import { Card, Row, Col, Input, Select, Divider, Modal, Button } from 'antd'
 import Loader from './Loader'
 
 import crypto_com_extract from '../data/crypto_com_currencies.json'
-import { useGetCryptosQuery } from '../services/cryptoCoinApi'
+import { useGetCryptosQuery } from '../services/cryptoGecko'
+import CryptoFormat from '../services/cryptoFormat'
+
 import CryptoHistory from './CryptoHistory'
 
 const Cryptolistcoinapi = () => {
   const { Option } = Select
-  const { data: cryptosCoinApi, isFetching, isSuccess } = useGetCryptosQuery()
+  const [cryptosFormat, setCryptosFormat] = useState([])
+  const { data: cryptosApi, isFetching, isSuccess } = useGetCryptosQuery()
+
+  useEffect(() => {
+    console.log('UseEffect:', cryptosApi)
+    cryptosApi.map((crypto) => {
+      console.log(CryptoFormat(crypto, 'gecko'))
+      return crypto
+    })
+  }, [cryptosApi])
 
   if (isFetching) return <Loader />
 
@@ -30,31 +41,24 @@ const Cryptolistcoinapi = () => {
 
       <br />
       <Row gutter={[32, 32]} className="crypto-card-container">
-        {cryptosCoinApi?.map((currency) => (
-          <Col
-            xs={24}
-            sm={12}
-            lg={6}
-            className="crypto-card"
-            key={currency.uuid}
-          >
+        {cryptosApi?.map((crypto) => (
+          <Col xs={24} sm={12} lg={6} className="crypto-card" key={crypto.id}>
             <Card
               className=""
               title=""
               extra={<img alt="crypto" className="crypto-image" src="" />}
               hoverable
             >
-              <p>Name:</p>
-              <p>symbol:</p>
-              <p>id:</p>
-              <p>Price (Now):€</p>
+              <p>Name:{crypto.name}</p>
+              <p>symbol:{crypto.symbol}</p>
+              <p>id:{crypto.id}</p>
+              <p>Price (Now):{crypto.current_price}€</p>
               <p>Price (Buy):€</p>
-              <p>Market Cap:</p>
+              <p>Market Cap:{crypto.market_cap}</p>
               <p>Daily Change: %</p>
               <p>Crypto:</p>
               <p>Buy: $</p>
               <p>Current:€</p>
-              <p>{JSON.stringify(currency)}</p>
             </Card>
           </Col>
         ))}

@@ -22,8 +22,12 @@ export const cryptoGecko = createApi({
     getCryptos: builder.query({
       query: () => createRequest(`/coins/markets?vs_currency=eur&ids=${ids}`),
     }),
-    https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=eur&from=1638058320&to=1638835200'
-    
+    getMarketChart: builder.query({
+      query: ({ currency, from, to }) =>
+        createRequest(
+          `/coins/bitcoin/market_chart/range?vs_currency=${currency}&from=${from}&to=${to}`,
+        ),
+    }),
   }),
 })
 
